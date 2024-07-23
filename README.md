@@ -11,9 +11,15 @@ input_number:
     max: 99999
     step: 1
     unit_of_measurement: 'days'
+input_boolean:
+  duolingo_practiced_today:
+    name: Duolingo Practiced Today
+    initial: off
 ```
 Then reload your config.
 
+
+## !! I have not tested the following steps on HAOS, opting instead ot use a server running debian.
 
 ### Modify the constants
 
@@ -33,7 +39,7 @@ pip3 install -r requirements.txt
 ```
 python3 api.py
 ```
-If you see anything other than a success message, feel free to troubleshoot or open an issue.
+When running first time, you'll get an error about reading the previous streak value.
 
 
 ### Setting a cron job to run at every 10th minute of the hour
@@ -44,5 +50,3 @@ Type the following, changing your path accordingly:
 ```
 */10 * * * * /usr/bin/python3 /PATH/TO/api.py
 ```
-
-- That's it, you should have an entity called `input_number.duolingo_streak` that will update every 10 minutes.
