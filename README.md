@@ -11,6 +11,12 @@ input_number:
     max: 99999
     step: 1
     unit_of_measurement: 'days'
+  duolingo_total_xp:
+    name: Duolingo Total XP
+    initial: 0
+    min: 0
+    max: 9999999
+    step: 1
 input_boolean:
   duolingo_practiced_today:
     name: Duolingo Practiced Today

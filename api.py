@@ -13,7 +13,8 @@ HA_URL = os.getenv("HA_URL")
 HA_TOKEN = os.getenv("HA_TOKEN")
 
 # API Endpoints
-HA_URL_NUMBER = f"{HA_URL}/api/services/input_number/set_value"
+HA_URL_NUMBER_STREAK = f"{HA_URL}/api/services/input_number/set_value"
+HA_URL_NUMBER_XP = f"{HA_URL}/api/services/input_number/set_value"
 HA_URL_BINARY_ON = f"{HA_URL}/api/services/input_boolean/turn_on"
 HA_URL_BINARY_OFF = f"{HA_URL}/api/services/input_boolean/turn_off"
 DUOLINGO_URL = f"https://www.duolingo.com/2017-06-30/users?username={DUOLINGO_USER}"
@@ -38,19 +39,19 @@ def fetch_user_data():
         print(f"Error fetching user data: {e}")
         return None
 
-def update_ha_input_number(streak_length):
+def update_ha_input_number(entity_id, value):
     try:
         data = {
-            "entity_id": "input_number.duolingo_streak",
-            "value": streak_length
+            "entity_id": entity_id,
+            "value": value
         }
-        response = requests.post(HA_URL_NUMBER, headers=headers, data=json.dumps(data))
+        response = requests.post(HA_URL_NUMBER_STREAK, headers=headers, data=json.dumps(data))
         if response.status_code == 200:
-            print(f"Successfully updated the input number: {streak_length} days")
+            print(f"Successfully updated the input number {entity_id}: {value}")
         else:
-            print(f"Failed to update the input number. Status code: {response.status_code}")
+            print(f"Failed to update the input number {entity_id}. Status code: {response.status_code}")
     except Exception as e:
-        print(f"Error updating input number: {e}")
+        print(f"Error updating input number {entity_id}: {e}")
 
 def update_ha_binary_sensor(practiced_today):
     try:
@@ -73,11 +74,13 @@ def main():
         user = user_data["users"][0]
         streak_length = user["streakData"]["currentStreak"]["length"]
         streak_end_date = user["streakData"]["currentStreak"]["endDate"]
+        total_xp = user["totalXp"]
         
         current_date = datetime.now().strftime("%Y-%m-%d")
         practiced_today = (streak_end_date == current_date)
         
-        update_ha_input_number(streak_length)
+        update_ha_input_number("input_number.duolingo_streak", streak_length)
+        update_ha_input_number("input_number.duolingo_total_xp", total_xp)
         update_ha_binary_sensor(practiced_today)
 
 if __name__ == "__main__":
